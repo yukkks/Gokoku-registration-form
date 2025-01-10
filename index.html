@@ -1,121 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
     />
+    <title>GOKOKU 登録フォーム</title>
   </head>
   <body>
     <section class="hero is-primary is-bold">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">Data Entry Form</h1>
+          <h1 class="title">GOKOKU 登録フォーム</h1>
         </div>
       </div>
     </section>
     <form id="form" class="container m-4 pl-4" method="POST">
+      <!-- 姓 -->
       <div class="field">
-        <label class="label">Client Name</label>
+        <label class="label">姓 </label>
         <div class="control">
           <input
             class="input"
             type="text"
-            placeholder="Your Client Name"
-            name="Client Name"
+            placeholder="例: 山田"
+            name="lastName"
+            required
           />
         </div>
       </div>
 
-      <!-- <div class="field">
-        <label class="label">Last Name</label>
+      <!-- 名 -->
+      <div class="field">
+        <label class="label">名 </label>
         <div class="control">
           <input
             class="input"
             type="text"
-            placeholder="Your Last Name"
-            name="Last Name"
+            placeholder="例: 太郎"
+            name="firstName"
+            required
           />
         </div>
-      </div> -->
+      </div>
 
+      <!-- 電話番号 -->
       <div class="field">
-        <label class="label">Email</label>
+        <label class="label">電話番号 </label>
         <div class="control">
           <input
             class="input"
-            type="email"
-            placeholder="Your Email"
-            name="Email"
+            type="tel"
+            placeholder="例: 090-1234-5678"
+            name="phone"
+            pattern="\d{3}-\d{4}-\d{4}"
+            title="形式: 090-1234-5678"
+            required
           />
         </div>
       </div>
 
+      <!-- LINE ID -->
       <div class="field">
-        <label class="label">Password</label>
+        <label class="label">LINE ID</label>
         <div class="control">
           <input
             class="input"
-            type="password"
-            placeholder="Your Password"
-            name="Password"
+            type="text"
+            placeholder="LINE IDを入力してください"
+            name="lineId"
+            required
           />
         </div>
       </div>
 
+      <!-- 郵便番号 -->
       <div class="field">
-        <label class="label">Date of Birth</label>
+        <label class="label">郵便番号 </label>
         <div class="control">
           <input
             class="input"
-            type="date"
-            placeholder="Your Date of Birth"
-            name="DOB"
+            type="text"
+            placeholder="例: 123-4567"
+            name="postalCode"
+            pattern="\d{3}-\d{4}"
+            title="形式: 123-4567"
+            required
           />
         </div>
       </div>
 
+      <!-- 都道府県 -->
       <div class="field">
-        <label class="label">Gender</label>
+        <label class="label">都道府県 </label>
         <div class="control">
-          <label class="radio">
-            <input type="radio" name="Gender" value="male" /> Male
-          </label>
-          <label class="radio">
-            <input type="radio" name="Gender" value="female" /> Female
-          </label>
+          <div class="select">
+            <select name="prefecture" required>
+              <option value="">都道府県を選択してください</option>
+              <option value="北海道">北海道</option>
+              <option value="青森県">青森県</option>
+              <option value="岩手県">岩手県</option>
+              <option value="宮城県">宮城県</option>
+              <option value="秋田県">秋田県</option>
+              <option value="山形県">山形県</option>
+              <option value="福島県">福島県</option>
+              <!-- 他の都道府県を追加してください -->
+            </select>
+          </div>
         </div>
       </div>
 
+      <!-- 市区町村と住所 -->
       <div class="field">
-        <label class="label">Agree to Terms</label>
-        <div class="control">
-          <label class="checkbox">
-            <input type="checkbox" name="Agree To Terms" value="yes" /> I agree
-            to the terms and conditions
-          </label>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="label">Additional Information</label>
+        <label class="label">市区町村と住所 </label>
         <div class="control">
           <textarea
             class="textarea"
-            placeholder="Any additional information"
-            name="Notes"
+            placeholder="例: 渋谷区渋谷1-2-3"
+            name="address"
+            rows="3"
+            required
           ></textarea>
         </div>
       </div>
 
+      <!-- 同意 -->
+      <div class="field">
+        <label class="label">同意 </label>
+        <div class="control">
+          <label class="checkbox">
+            <input type="checkbox" name="consent" value="yes" required />
+            利用規約に同意します。<a href="https://yukkks.github.io/GOKOKU_terms-and-conditions/" target="_blank">利用規約</a>
+          </label>
+        </div>
+      </div>
+
+      <!-- 送信ボタン -->
       <div class="field is-grouped">
         <div class="control">
           <button class="button is-primary" type="submit" id="submit-button">
-            Sign Up
+            送信
           </button>
         </div>
         <div class="control">
-          <button class="button is-danger">Cancel</button>
+          <button class="button is-danger" type="button">
+            キャンセル 
+          </button>
         </div>
       </div>
     </form>
@@ -132,66 +164,5 @@
         border-color: aquamarine;
       "
     ></div>
-
-    <script>
-      document.getElementById("form").addEventListener("submit", function (e) {
-        e.preventDefault(); // Prevent the default form submission
-        document.getElementById("message").textContent = "Submitting..";
-        document.getElementById("message").style.display = "block";
-        document.getElementById("submit-button").disabled = true;
-
-        // Collect the form data
-        var formData = new FormData(this);
-        var keyValuePairs = [];
-        for (var pair of formData.entries()) {
-          keyValuePairs.push(pair[0] + "=" + pair[1]);
-        }
-
-        var formDataString = keyValuePairs.join("&");
-
-        // Send a POST request to your Google Apps Script
-        fetch(
-          "https://script.google.com/macros/s/AKfycbxtxPL-jnKuHLHLGhfQnl9mxuL9WKyrThq3iyMU6vMAmSCQpYb7QcwxiB1asKx6Glofvg/exec",
-          {
-            redirect: "follow",
-            method: "POST",
-            body: formDataString,
-            headers: {
-              "Content-Type": "text/plain;charset=utf-8",
-            },
-          }
-        )
-          .then(function (response) {
-            // Check if the request was successful
-            if (response) {
-              return response; // Assuming your script returns JSON response
-            } else {
-              throw new Error("Failed to submit the form.");
-            }
-          })
-          .then(function (data) {
-            // Display a success message
-            document.getElementById("message").textContent =
-              "Data submitted successfully!";
-            document.getElementById("message").style.display = "block";
-            document.getElementById("message").style.backgroundColor = "green";
-            document.getElementById("message").style.color = "beige";
-            document.getElementById("submit-button").disabled = false;
-            document.getElementById("form").reset();
-
-            setTimeout(function () {
-              document.getElementById("message").textContent = "";
-              document.getElementById("message").style.display = "none";
-            }, 2600);
-          })
-          .catch(function (error) {
-            // Handle errors, you can display an error message here
-            console.error(error);
-            document.getElementById("message").textContent =
-              "An error occurred while submitting the form.";
-            document.getElementById("message").style.display = "block";
-          });
-      });
-    </script>
   </body>
 </html>
