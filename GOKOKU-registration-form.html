@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
+    />
+    <title>GOKOKU 登録フォーム</title>
+  </head>
+  <body>
+    <section class="hero is-primary is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">GOKOKU 登録フォーム</h1>
+        </div>
+      </div>
+    </section>
+    <form id="form" class="container m-4 pl-4" method="POST">
+      <!-- 姓 -->
+      <div class="field">
+        <label class="label">姓 </label>
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            placeholder="例: 山田"
+            name="lastName"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- 名 -->
+      <div class="field">
+        <label class="label">名 </label>
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            placeholder="例: 太郎"
+            name="firstName"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- 電話番号 -->
+      <div class="field">
+        <label class="label">電話番号 </label>
+        <div class="control">
+          <input
+            class="input"
+            type="tel"
+            placeholder="例: 090-1234-5678"
+            name="phone"
+            pattern="\d{3}-\d{4}-\d{4}"
+            title="形式: 090-1234-5678"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- LINE ID -->
+      <div class="field">
+        <label class="label">LINE ID</label>
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            placeholder="LINE IDを入力してください"
+            name="lineId"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- 郵便番号 -->
+      <div class="field">
+        <label class="label">郵便番号 </label>
+        <div class="control">
+          <input
+            class="input"
+            type="text"
+            placeholder="例: 123-4567"
+            name="postalCode"
+            pattern="\d{3}-\d{4}"
+            title="形式: 123-4567"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- 都道府県 -->
+      <div class="field">
+        <label class="label">都道府県 </label>
+        <div class="control">
+          <div class="select">
+            <select name="prefecture" required>
+              <option value="">都道府県を選択してください</option>
+              <option value="北海道">北海道</option>
+              <option value="青森県">青森県</option>
+              <option value="岩手県">岩手県</option>
+              <option value="宮城県">宮城県</option>
+              <option value="秋田県">秋田県</option>
+              <option value="山形県">山形県</option>
+              <option value="福島県">福島県</option>
+              <!-- 他の都道府県を追加してください -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 市区町村と住所 -->
+      <div class="field">
+        <label class="label">市区町村と住所 </label>
+        <div class="control">
+          <textarea
+            class="textarea"
+            placeholder="例: 渋谷区渋谷1-2-3"
+            name="address"
+            rows="3"
+            required
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- 同意 -->
+      <div class="field">
+        <label class="label">同意 </label>
+        <div class="control">
+          <label class="checkbox">
+            <input type="checkbox" name="consent" value="yes" required />
+            利用規約に同意します。<a href="https://yukkks.github.io/GOKOKU_terms-and-conditions/" target="_blank">利用規約</a>
+          </label>
+        </div>
+      </div>
+
+      <!-- 送信ボタン -->
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-primary" type="submit" id="submit-button">
+            送信
+          </button>
+        </div>
+        <div class="control">
+          <button class="button is-danger" type="button">
+            キャンセル 
+          </button>
+        </div>
+      </div>
+    </form>
+    <div
+      id="message"
+      style="
+        display: none;
+        margin: 20px;
+        font-weight: bold;
+        color: green;
+        padding: 8px;
+        background-color: beige;
+        border-radius: 4px;
+        border-color: aquamarine;
+      "
+    ></div>
+  </body>
+</html>
