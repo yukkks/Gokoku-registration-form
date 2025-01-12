@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8ECFQXT0K5"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-8ECFQXT0K5');
-</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -17,6 +8,12 @@
       href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"
     />
     <title>GOKOKU 登録フォーム</title>
+    <style>
+      textarea[readonly] {
+        background-color: #f9f9f9;
+        cursor: not-allowed;
+      }
+    </style>
   </head>
   <body>
     <section class="hero is-primary is-bold">
@@ -62,14 +59,14 @@
           <input
             class="input"
             type="tel"
-            placeholder="例: 090-1234-5678"
+            placeholder="例: 080-1111-1111"
             name="phone"
             id="phone"
             maxlength="13"
             required
           />
         </div>
-        <p class="help">形式: 090-1234-5678（ハイフンは自動的に追加されます）</p>
+        <p class="help">形式: 080-1111-1111（ハイフンは自動的に追加されます）</p>
       </div>
 
       <!-- LINE ID -->
@@ -95,11 +92,12 @@
             type="text"
             placeholder="例: 123-4567"
             name="postalCode"
-            pattern="\d{3}-\d{4}"
-            title="形式: 123-4567"
+            id="postalCode"
+            maxlength="8"
             required
           />
         </div>
+        <p class="help">形式: 123-4567（ハイフンは自動的に追加されます）</p>
       </div>
 
       <!-- 都道府県 -->
@@ -175,13 +173,58 @@
         </div>
       </div>
 
-      <!-- 同意 -->
+      <!-- 利用規約 -->
       <div class="field">
-        <label class="label">同意</label>
+        <label class="label">利用規約 (Terms and Conditions)</label>
+        <div class="control">
+          <textarea
+            class="textarea"
+            style="height: 200px; overflow-y: scroll;"
+            readonly
+          >
+GOKOKU 利用規約
+
+第1条 目的
+GOKOKUは、自転車の背面に安装されるタブレットを通じて広告を掲載し、自転車オーナーに広告の收益の一部を配分するサービスを提供します。
+
+第2条 登録条件
+1. 対象者は、正常に自転車を所有し、日常的に利用している人に限定されます。
+2. 登録者は、LINEの公式アカウントを追加し、フォームを全て正しく記入する必要があります。
+
+第3条 広告デバイスの利用
+1. GOKOKUが提供するタブレットは、登録者の自転車に安装されます。
+2. 安装されたタブレットは、GOKOKUのサーバーを通じて監視されます。
+3. 登録者は、デバイスを充電し、正常に操作できる状態を保つことに責任を持ちます。
+
+第4条 一定金額の配分
+1. GOKOKUは、每日倍金で500円を配分しますが、条件としてデバイスが正常に動作し、インプレッション数が1日あたり1000を超える必要があります。
+2. 支払い方法はLINE Payを通じ、登録時に設定されたLINEアカウントへ直接振り込まれます。
+3. 登録者がサービス利用を停止したい場合、デバイスを返却する法的義務を負います。
+
+第5条 責任の限定
+1. タブレットの故障や機能保存に関する問題については、GOKOKUは対処を行いますが、自転車の利用経路の制総などによる保護については保証しません。
+2. 登録者の不正利用やデータ漏洩については、登録者自身が責任を負うものとします。
+
+第6条 解約の変更
+GOKOKUは、正常に広告サービスを提供するために、この解約を不要に変更することがあります。
+
+第7条 問い合わせ
+問題や質問がある場合は、LINE公式アカウントを通じてお問い合わせください。
+          </textarea>
+        </div>
+      </div>
+      <div class="field">
         <div class="control">
           <label class="checkbox">
-            <input type="checkbox" name="consent" value="yes" required />
-            利用規約に同意します。<a href="https://yukkks.github.io/GOKOKU_terms-and-conditions/" target="_blank">利用規約</a>
+            <input
+              type="checkbox"
+              name="consent"
+              id="consentCheckbox"
+              value="yes"
+              required
+              onclick="toggleSubmitButton()"
+            />
+            利用規約に同意します。
           </label>
         </div>
       </div>
@@ -189,7 +232,12 @@
       <!-- 送信ボタン -->
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-primary" type="submit" id="submit-button">
+          <button
+            class="button is-primary"
+            type="submit"
+            id="submitButton"
+            disabled
+          >
             送信
           </button>
         </div>
@@ -200,53 +248,9 @@
         </div>
       </div>
     </form>
-    <div
-      id="message"
-      style="
-        display: none;
-        margin: 20px;
-        font-weight: bold;
-        color: green;
-        padding: 8px;
-        background-color: beige;
-        border-radius: 4px;
-        border-color: aquamarine;
-      "
-    ></div>
 
     <script>
-        document.getElementById("phone").addEventListener("input", function (e) {
-          let value = e.target.value.replace(/\D/g, "");
-          if (value.length > 3 && value.length <= 7) {
-            value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
-          } else if (value.length > 7) {
-            value = value.replace(/^(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
-          }
-          e.target.value = value;
-        });
-  
-        document.getElementById("form").addEventListener("submit", function (e) {
-          e.preventDefault();
-          const formData = new FormData(this);
-          const payload = new URLSearchParams();
-          formData.forEach((value, key) => payload.append(key, value));
-          console.log("Payload:", payload.toString());
-          fetch("https://script.google.com/macros/s/AKfycbxtxPL-jnKuHLHLGhfQnl9mxuL9WKyrThq3iyMU6vMAmSCQpYb7QcwxiB1asKx6Glofvg/exec", {
-            method: "POST",
-            body: payload,
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log("Success:", data);
-              alert("送信されました。GOKOKU公式アカウントからご連絡いたしますので、少々お待ちください");
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              alert("送信されました。GOKOKU公式アカウントからご連絡いたしますので、少々お待ちください");
-            });
-        });
-      </script>
-    </body>
-  </html>
-
-
+      // Automatically format phone numbers with hyphens
+      document.getElementById("phone").addEventListener("input", function (e) {
+        let value = e.target.value.replace(/\D/g, "");
+        if (value.length > 3 && value.length
