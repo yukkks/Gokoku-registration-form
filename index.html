@@ -172,8 +172,6 @@ GOKOKUは、正常に広告サービスを提供するために、この解約�
           </button>
         </div>
       </div>
-    </form>
-
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const phoneInput = document.getElementById("phone");
@@ -208,4 +206,38 @@ GOKOKUは、正常に広告サービスを提供するために、この解約�
       });
     </script>
   </body>
+</html>
+<script>
+    document.getElementById("phone").addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length > 3 && value.length <= 7) {
+        value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
+      } else if (value.length > 7) {
+        value = value.replace(/^(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
+      }
+      e.target.value = value;
+    });
+
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const payload = new URLSearchParams();
+      formData.forEach((value, key) => payload.append(key, value));
+      console.log("Payload:", payload.toString());
+      fetch("https://script.google.com/macros/s/AKfycbxtxPL-jnKuHLHLGhfQnl9mxuL9WKyrThq3iyMU6vMAmSCQpYb7QcwxiB1asKx6Glofvg/exec", {
+        method: "POST",
+        body: payload,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          alert("送信されました。GOKOKU公式アカウントからご連絡いたしますので、少々お待ちください");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          alert("送信されました。GOKOKU公式アカウントからご連絡いたしますので、少々お待ちください");
+        });
+    });
+  </script>
+</body>
 </html>
