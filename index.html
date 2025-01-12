@@ -210,6 +210,7 @@ GOKOKUは、正常に広告サービスを提供するために、この解約�
 
 第7条 問い合わせ
 問題や質問がある場合は、LINE公式アカウントを通じてお問い合わせください。
+...
           </textarea>
         </div>
       </div>
@@ -253,4 +254,29 @@ GOKOKUは、正常に広告サービスを提供するために、この解約�
       // Automatically format phone numbers with hyphens
       document.getElementById("phone").addEventListener("input", function (e) {
         let value = e.target.value.replace(/\D/g, "");
-        if (value.length > 3 && value.length
+        if (value.length > 3 && value.length <= 7) {
+          value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
+        } else if (value.length > 7) {
+          value = value.replace(/^(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
+        }
+        e.target.value = value.substring(0, 13);
+      });
+
+      // Automatically format postal codes with a hyphen
+      document.getElementById("postalCode").addEventListener("input", function (e) {
+        let value = e.target.value.replace(/\D/g, "");
+        if (value.length > 3) {
+          value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
+        }
+        e.target.value = value.substring(0, 8);
+      });
+
+      // Enable submit button only when the T&C checkbox is ticked
+      function toggleSubmitButton() {
+        const checkbox = document.getElementById("consentCheckbox");
+        const submitButton = document.getElementById("submitButton");
+        submitButton.disabled = !checkbox.checked;
+      }
+    </script>
+  </body>
+</html>
