@@ -14,6 +14,16 @@
         cursor: not-allowed;
       }
     </style>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ECFQXT0K5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-8ECFQXT0K5");
+    </script>
   </head>
   <body>
     <section class="hero is-primary is-bold">
@@ -23,240 +33,136 @@
         </div>
       </div>
     </section>
+
     <form id="form" class="container m-4 pl-4" method="POST">
-      <!-- 姓 -->
+      <!-- Fields: Name, Phone, Postal Code -->
       <div class="field">
         <label class="label">姓</label>
         <div class="control">
-          <input
-            class="input"
-            type="text"
-            placeholder="例: 山田"
-            name="lastName"
-            required
-          />
+          <input class="input" type="text" placeholder="例: 山田" name="lastName" required />
         </div>
       </div>
 
-      <!-- 名 -->
       <div class="field">
         <label class="label">名</label>
         <div class="control">
-          <input
-            class="input"
-            type="text"
-            placeholder="例: 太郎"
-            name="firstName"
-            required
-          />
+          <input class="input" type="text" placeholder="例: 太郎" name="firstName" required />
         </div>
       </div>
 
-      <!-- 電話番号 -->
       <div class="field">
         <label class="label">電話番号</label>
         <div class="control">
-          <input
-            class="input"
-            type="tel"
-            placeholder="例: 080-1111-1111"
-            name="phone"
-            id="phone"
-            maxlength="13"
-            required
-          />
+          <input class="input" type="tel" placeholder="例: 080-1111-1111" name="phone" id="phone" maxlength="13" required />
         </div>
         <p class="help">形式: 080-1111-1111（ハイフンは自動的に追加されます）</p>
       </div>
-      
-      <!-- 郵便番号 -->
+
+      <!-- Postal Code and Address -->
       <div class="field">
         <label class="label">郵便番号</label>
         <div class="control">
-          <input
-            class="input"
-            type="text"
-            placeholder="例: 123-4567"
-            name="postalCode"
-            id="postalCode"
-            maxlength="8"
-            required
-          />
+          <input class="input" type="text" placeholder="例: 123-4567" name="postalCode" id="postalCode" maxlength="8" required />
         </div>
         <p class="help">形式: 123-4567（ハイフンは自動的に追加されます）</p>
       </div>
 
-       <!-- 都道府県 -->
-       <div class="field">
-        <label class="label">都道府県</label>
+      <div class="field">
+        <label class="label">都道府県と市区町村</label>
         <div class="control">
-          <div class="select">
-            <select name="prefecture" required>
-              <option value="">都道府県を選択してください</option>
-              <option value="北海道">北海道</option>
-              <option value="青森県">青森県</option>
-              <option value="岩手県">岩手県</option>
-              <option value="宮城県">宮城県</option>
-              <option value="秋田県">秋田県</option>
-              <option value="山形県">山形県</option>
-              <option value="福島県">福島県</option>
-              <option value="茨城県">茨城県</option>
-              <option value="栃木県">栃木県</option>
-              <option value="群馬県">群馬県</option>
-              <option value="埼玉県">埼玉県</option>
-              <option value="千葉県">千葉県</option>
-              <option value="東京都">東京都</option>
-              <option value="神奈川県">神奈川県</option>
-              <option value="新潟県">新潟県</option>
-              <option value="富山県">富山県</option>
-              <option value="石川県">石川県</option>
-              <option value="福井県">福井県</option>
-              <option value="山梨県">山梨県</option>
-              <option value="長野県">長野県</option>
-              <option value="岐阜県">岐阜県</option>
-              <option value="静岡県">静岡県</option>
-              <option value="愛知県">愛知県</option>
-              <option value="三重県">三重県</option>
-              <option value="滋賀県">滋賀県</option>
-              <option value="京都府">京都府</option>
-              <option value="大阪府">大阪府</option>
-              <option value="兵庫県">兵庫県</option>
-              <option value="奈良県">奈良県</option>
-              <option value="和歌山県">和歌山県</option>
-              <option value="鳥取県">鳥取県</option>
-              <option value="島根県">島根県</option>
-              <option value="岡山県">岡山県</option>
-              <option value="広島県">広島県</option>
-              <option value="山口県">山口県</option>
-              <option value="徳島県">徳島県</option>
-              <option value="香川県">香川県</option>
-              <option value="愛媛県">愛媛県</option>
-              <option value="高知県">高知県</option>
-              <option value="福岡県">福岡県</option>
-              <option value="佐賀県">佐賀県</option>
-              <option value="長崎県">長崎県</option>
-              <option value="熊本県">熊本県</option>
-              <option value="大分県">大分県</option>
-              <option value="宮崎県">宮崎県</option>
-              <option value="鹿児島県">鹿児島県</option>
-              <option value="沖縄県">沖縄県</option>
-            </select>
-          </div>
+          <input class="input" type="text" id="prefecture" placeholder="都道府県" readonly />
+          <input class="input" type="text" id="city" placeholder="市区町村" readonly />
         </div>
       </div>
- <!-- 市区町村と住所 -->
- <div class="field">
-    <label class="label">市区町村と住所</label>
-    <div class="control">
-      <textarea
-        class="textarea"
-        placeholder="例: 渋谷区渋谷1-2-3"
-        name="address"
-        rows="3"
-        required
-      ></textarea>
-    </div>
-  </div>
-      <!-- 利用規約 -->
+
+      <div class="field">
+        <label class="label">住所詳細</label>
+        <div class="control">
+          <input class="input" type="text" id="addressDetail" name="address" placeholder="例: 渋谷1-2-3" />
+        </div>
+      </div>
+
+      <!-- Terms and Conditions -->
       <div class="field">
         <label class="label">利用規約</label>
         <div class="control">
-          <textarea
-            class="textarea"
-            style="height: 200px; overflow-y: scroll;"
-            readonly
-          >
-GOKOKU 利用規約
-第1条 目的
-GOKOKUは、自転車の背面に安装されるタブレットを通じて広告を掲載し、自転車オーナーに広告の收益の一部を配分するサービスを提供します。
-
-第2条 登録条件
-1. 対象者は、正常に自転車を所有し、日常的に利用している人に限定されます。
-2. 登録者は、LINEの公式アカウントを追加し、フォームを全て正しく記入する必要があります。
-
-第3条 広告デバイスの利用
-1. GOKOKUが提供するタブレットは、登録者の自転車に安装されます。
-2. 安装されたタブレットは、GOKOKUのサーバーを通じて監視されます。
-3. 登録者は、デバイスを充電し、正常に操作できる状態を保つことに責任を持ちます。
-
-第4条 一定金額の配分
-1. GOKOKUは、每日倍金で500円を配分しますが、条件としてデバイスが正常に動作し、インプレッション数が1日あたり1000を超える必要があります。
-2. 支払い方法はLINE Payを通じ、登録時に設定されたLINEアカウントへ直接振り込まれます。
-3. 登録者がサービス利用を停止したい場合、デバイスを返却する法的義務を負います。
-
-第5条 責任の限定
-1. タブレットの故障や機能保存に関する問題については、GOKOKUは対処を行いますが、自転車の利用経路の制総などによる保護については保証しません。
-2. 登録者の不正利用やデータ漏洩については、登録者自身が責任を負うものとします。
-
-第6条 解約の変更
-GOKOKUは、正常に広告サービスを提供するために、この解約を不要に変更することがあります。
-
-第7条 問い合わせ
-問題や質問がある場合は、LINE公式アカウントを通じてお問い合わせください。
+          <textarea class="textarea" style="height: 200px; overflow-y: scroll;" readonly>
+          利用規約内容
           </textarea>
         </div>
       </div>
+
       <div class="field">
         <div class="control">
           <label class="checkbox">
-            <input
-              type="checkbox"
-              name="consent"
-              id="consentCheckbox"
-              value="yes"
-              required
-            />
+            <input type="checkbox" name="consent" id="consentCheckbox" value="yes" required />
             利用規約に同意します。
           </label>
         </div>
       </div>
 
-      <!-- 送信ボタン -->
+      <!-- Submit Button -->
       <div class="field is-grouped">
         <div class="control">
-          <button
-            class="button is-primary"
-            type="submit"
-            id="submitButton"
-            disabled
-          >
-            送信
-          </button>
+          <button class="button is-primary" type="submit" id="submitButton" disabled>送信</button>
         </div>
         <div class="control">
-          <button class="button is-danger" type="button">
-            キャンセル
-          </button>
+          <button class="button is-danger" type="button">キャンセル</button>
         </div>
       </div>
+    </form>
+
+    <!-- Thank You Popup -->
+    <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+    <div id="thank-you-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 10px; text-align: center; z-index: 1000;">
+      <h2>ご登録ありがとうございます！</h2>
+      <p>設定を完了するには、以下のリンクからLINE公式アカウントを追加してください。</p>
+      <a href="https://line.me/R/ti/p/gokoku" target="_blank">
+        <button style="background-color: #00C300; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">LINEで追加する</button>
+      </a>
+    </div>
+
+    <!-- JavaScript -->
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const phoneInput = document.getElementById("phone");
         const postalCodeInput = document.getElementById("postalCode");
-        const consentCheckbox = document.getElementById("consentCheckbox");
         const submitButton = document.getElementById("submitButton");
+        const consentCheckbox = document.getElementById("consentCheckbox");
 
-        // Automatically format phone numbers with hyphens
+        // Phone number formatting with hyphens
         phoneInput.addEventListener("input", (e) => {
           let value = e.target.value.replace(/\D/g, "");
-          if (value.length > 3 && value.length <= 7) {
-            value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
-          } else if (value.length > 7) {
-            value = value.replace(/^(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
-          }
+          if (value.length > 3 && value.length <= 7) value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
+          if (value.length > 7) value = value.replace(/^(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
           e.target.value = value.substring(0, 13);
         });
 
-        // Automatically format postal codes with a hyphen
-        postalCodeInput.addEventListener("input", (e) => {
+        // Postal code formatting with hyphens and autofill
+        postalCodeInput.addEventListener("input", async (e) => {
           let value = e.target.value.replace(/\D/g, "");
           if (value.length > 3) {
             value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
           }
           e.target.value = value.substring(0, 8);
+
+          // Autofill address if postal code is valid
+          if (value.length === 7) {
+            try {
+              const response = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${value}`);
+              const data = await response.json();
+              if (data.results) {
+                const result = data.results[0];
+                document.getElementById("prefecture").value = result.address1;
+                document.getElementById("city").value = `${result.address2} ${result.address3}`;
+              } else alert("郵便番号に対応する住所が見つかりませんでした。");
+            } catch {
+              alert("住所情報の取得中にエラーが発生しました。");
+            }
+          }
         });
 
-        // Enable submit button only when the T&C checkbox is ticked
+        // Enable submit button on T&C agreement
         consentCheckbox.addEventListener("change", () => {
           submitButton.disabled = !consentCheckbox.checked;
         });
@@ -264,58 +170,3 @@ GOKOKUは、正常に広告サービスを提供するために、この解約�
     </script>
   </body>
 </html>
-<script>
-    // Format phone number input
-    document.getElementById("phone").addEventListener("input", function (e) {
-      let value = e.target.value.replace(/\D/g, "");
-      if (value.length > 3 && value.length <= 7) {
-        value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
-      } else if (value.length > 7) {
-        value = value.replace(/^(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
-      }
-      e.target.value = value;
-    });
-  
-    // Handle form submission
-    document.getElementById("form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      const payload = new URLSearchParams();
-      formData.forEach((value, key) => payload.append(key, value));
-      console.log("Payload:", payload.toString());
-  
-      fetch("https://script.google.com/macros/s/AKfycbxtxPL-jnKuHLHLGhfQnl9mxuL9WKyrThq3iyMU6vMAmSCQpYb7QcwxiB1asKx6Glofvg/exec", {
-        method: "POST",
-        body: payload,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-  
-          // Show the thank-you popup regardless of success
-          document.getElementById("thank-you-popup").style.display = "block";
-          document.getElementById("overlay").style.display = "block";
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-  
-          // Show the thank-you popup even on error
-          document.getElementById("thank-you-popup").style.display = "block";
-          document.getElementById("overlay").style.display = "block";
-        });
-    });
-  </script>
-  
-  <!-- Add Thank-You Popup and Overlay -->
-  <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-  <div id="thank-you-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 10px; text-align: center; z-index: 1000;">
-    <h2>ご登録ありがとうございます！</h2>
-    <p>設定を完了するには、以下のリンクからLINE公式アカウントを追加してください。</p>
-    <a href="https://line.me/R/ti/p/gokoku" target="_blank">
-      <button style="background-color: #00C300; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
-        LINEで追加する
-      </button>
-    </a>
-  </div>
-  
-  
