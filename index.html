@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8ECFQXT0K5"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-8ECFQXT0K5');
-</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -288,6 +279,7 @@ GOKOKUは、正常に広告サービスを提供するために、この解約�
   </body>
 </html>
 <script>
+    // Format phone number input
     document.getElementById("phone").addEventListener("input", function (e) {
       let value = e.target.value.replace(/\D/g, "");
       if (value.length > 3 && value.length <= 7) {
@@ -297,13 +289,15 @@ GOKOKUは、正常に広告サービスを提供するために、この解約�
       }
       e.target.value = value;
     });
-
+  
+    // Handle form submission
     document.getElementById("form").addEventListener("submit", function (e) {
       e.preventDefault();
       const formData = new FormData(this);
       const payload = new URLSearchParams();
       formData.forEach((value, key) => payload.append(key, value));
       console.log("Payload:", payload.toString());
+  
       fetch("https://script.google.com/macros/s/AKfycbxtxPL-jnKuHLHLGhfQnl9mxuL9WKyrThq3iyMU6vMAmSCQpYb7QcwxiB1asKx6Glofvg/exec", {
         method: "POST",
         body: payload,
@@ -311,13 +305,31 @@ GOKOKUは、正常に広告サービスを提供するために、この解約�
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:", data);
-          alert("送信されました。GOKOKU公式アカウントからご連絡いたしますので、少々お待ちください");
+  
+          // Show the thank-you popup regardless of success
+          document.getElementById("thank-you-popup").style.display = "block";
+          document.getElementById("overlay").style.display = "block";
         })
         .catch((error) => {
           console.error("Error:", error);
-          alert("送信されました。GOKOKU公式アカウントからご連絡いたしますので、少々お待ちください");
+  
+          // Show the thank-you popup even on error
+          document.getElementById("thank-you-popup").style.display = "block";
+          document.getElementById("overlay").style.display = "block";
         });
     });
   </script>
-</body>
-</html>
+  
+  <!-- Add Thank-You Popup and Overlay -->
+  <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+  <div id="thank-you-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 10px; text-align: center; z-index: 1000;">
+    <h2>ご登録ありがとうございます！</h2>
+    <p>設定を完了するには、以下のリンクからLINE公式アカウントを追加してください。</p>
+    <a href="https://line.me/R/ti/p/gokoku" target="_blank">
+      <button style="background-color: #00C300; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+        LINEで追加する
+      </button>
+    </a>
+  </div>
+  
+  
