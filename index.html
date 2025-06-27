@@ -55,6 +55,21 @@
       .popup-button:hover {
         background-color: #00a300;
       }
+      .loader {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    animation: spin 0.6s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
     </style>
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ECFQXT0K5"></script>
@@ -157,7 +172,10 @@
       <!-- Submit Button -->
       <div class="field is-grouped">
         <div class="control">
-          <button class="button is-primary" type="submit" id="submitButton" disabled>送信</button>
+          <button class="button is-primary" type="submit" id="submitButton" disabled>
+            <span id="submitText">送信</span>
+            <span id="loadingSpinner" class="loader is-small" style="display: none; margin-left: 8px;" ></span>
+          </button>
         </div>
         <div class="control">
           <button class="button is-danger" type="button">キャンセル</button>
@@ -168,11 +186,11 @@
     <!-- Thank You Popup -->
     <div id="overlay"></div>
     <div id="thank-you-popup">
-      <h2>ご登録ありがとうございます！</h2>
+      <h2>ご登録完了いたしました
   <p>
     デバイスの発送準備を進めます。<br />
-    <b>報酬の受け取り、サポート対応、稼働状況の確認</b>などの通知を受け取るために、<br />
-    必ず以下のボタンからGOKOKUのLINE公式アカウントを追加してください。
+    <b>サポート対応、稼働状況の確認</b>の通知を受け取るために、<br />
+    必ずGOKOKUのLINE公式アカウントを追加してください。
       <a href="https://lin.ee/7H7xmDt" target="_blank">
         <button class="popup-button">LINEで追加する</button>
       </a>
@@ -273,7 +291,8 @@ document.getElementById("postalCode").addEventListener("input", (e) => {
 
         document.getElementById("form").addEventListener("submit", async (e) => {
           e.preventDefault();
-          submitButton.innerText = "送信中...";
+          document.getElementById("submitText").innerText = "送信中...";
+          document.getElementById("loadingSpinner").style.display = "inline-block";
           submitButton.disabled = true;
           const formData = new FormData(e.target);
           const payload = new URLSearchParams();
@@ -294,9 +313,9 @@ document.getElementById("postalCode").addEventListener("input", (e) => {
             error);
             alert("送信中にエラーが発生しました。もう一度お試しください。");
           } finally {
-            submitButton.innerText = "送信済み";
+            document.getElementById("submitText").innerText = "送信済み";
+            document.getElementById("loadingSpinner").style.display = "none";
             submitButton.disabled = false;
-
           }
         });
       });
