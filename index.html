@@ -49,6 +49,7 @@
       .popup-button {
         background-color: #00c300;
         color: white;
+        min-width: 180px;
         padding: 10px 20px;
         border: none;
         border-radius: 5px;
@@ -125,7 +126,7 @@
       <div class="field">
         <label class="label">住所詳細</label>
         <div class="control">
-          <input class="input" type="text" id="addressDetail" name="address" placeholder="例: 1-2-3 206号室" />
+          <input class="input" type="text" id="addressDetail" name="address" placeholder="例: 1-2-3 206号室" required/>
         </div>
       </div>
 
@@ -196,11 +197,17 @@
        <b>サポート対応、稼働状況の確認</b>の通知を受け取るために、<br />
        必ずGOKOKUのLINE公式アカウントを追加してください。
       </p>
-      <a href="https://lin.ee/7H7xmDt" target="_blank">
-        <button class="popup-button">LINEで追加する</button>
-      </a>
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="https://lin.ee/7H7xmDt" target="_blank">
+          <button class="popup-button">LINEで追加する</button>
+        </a>
     </div>
-    
+    <!-- Error Popup for Invalid Postal Code-->
+    <div id="error-popup" style="display:none; position:fixed; top:40%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px 30px; box-shadow:0 4px 10px rgba(0,0,0,0.3); border-radius:10px; text-align:center; z-index:1001;">
+    <p style="margin-bottom:16px;">郵便番号が見つかりませんでした。</p>
+    <button class="button is-primary" onclick="document.getElementById('error-popup').style.display='none'">閉じる</button>
+     </div>
+  
     <script>
       let lineUserId = null;
     
@@ -213,6 +220,7 @@
         }
         const profile = await liff.getProfile();
         lineUserId = profile.userId;
+        document.getElementById("phone").focus(); //
 
         // ⬇️ Your original logic starts here
         const phoneInput = document.getElementById("phone");
@@ -274,7 +282,7 @@ document.getElementById("postalCode").addEventListener("input", (e) => {
           document.getElementById("prefecture").value = result.address1 || "";
           document.getElementById("city").value = `${result.address2 || ""} ${result.address3 || ""}`.trim();
         } else {
-          console.warn("No address found for postal code:", rawPostalCode);
+          document.getElementById("error-popup").style.display = "block";
           document.getElementById("prefecture").value = "";
           document.getElementById("city").value = "";
         }
