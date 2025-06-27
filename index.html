@@ -210,6 +210,7 @@
   
     <script>
       let lineUserId = null;
+      let isPostalCodeValid = false;
     
       document.addEventListener("DOMContentLoaded", async () => {
         // 🔐 LIFF Login to get LINE user ID
@@ -281,10 +282,12 @@ document.getElementById("postalCode").addEventListener("input", (e) => {
           const result = data.results[0];
           document.getElementById("prefecture").value = result.address1 || "";
           document.getElementById("city").value = `${result.address2 || ""} ${result.address3 || ""}`.trim();
+          isPostalCodeValid = true;
         } else {
           document.getElementById("error-popup").style.display = "block";
           document.getElementById("prefecture").value = "";
           document.getElementById("city").value = "";
+          isPostalCodeValid = false;
         }
       } catch (error) {
         console.error("Error fetching address data:", error);
@@ -304,7 +307,17 @@ document.getElementById("postalCode").addEventListener("input", (e) => {
 
         document.getElementById("form").addEventListener("submit", async (e) => {
           e.preventDefault();
+          if (!isPostalCodeValid) {
+            document.getElementById("error-popup").style.display = "block";
+            return;
+          }
+          const phone = document.getElementById("phone").value.trim();
+          const phoneRegex = /^0\d{2}-\d{4}-\d{4}$/;
 
+          if (!phoneRegex.test(phone)) {
+            alert("正しい電話番号を入力してください（例: 080-1234-5678）");
+            return;
+         }
           const prefecture = document.getElementById("prefecture").value.trim();
           const city = document.getElementById("city").value.trim();
 
