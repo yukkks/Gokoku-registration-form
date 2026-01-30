@@ -17,7 +17,7 @@
       --success:rgba(80, 255, 170, .95);
     }
     body { background: var(--bg); color: var(--text); }
-    .hero.is-primary { background: #0b0b0b; }
+
     .box {
       background: var(--card);
       border-radius: 18px;
@@ -94,8 +94,7 @@
 
     /* Success state */
     .success .ring{
-      background:
-        conic-gradient(var(--success) 0deg, var(--success) 360deg);
+      background: conic-gradient(var(--success) 0deg, var(--success) 360deg);
       filter: drop-shadow(0 0 26px rgba(80,255,170,.22));
     }
     .success .inner{
@@ -119,7 +118,6 @@
 </head>
 
 <body>
-
   <section class="section">
     <div class="container" style="max-width: 620px;">
       <div class="box">
@@ -140,8 +138,6 @@
           <div class="buttons">
             <button id="autoBtn" class="button is-primary">Tap</button>
           </div>
-
-          
         </div>
       </div>
     </div>
@@ -158,8 +154,8 @@
 
 <script>
   // ===== SETTINGS =====
-  const HOLD_MS = 7000;         // change to 5000 if you want faster
-  const LOADING_MS = 600;       // simulated “submitting…” delay after hold completes
+  const HOLD_MS = 7000;   // change to 5000 if you want faster
+  const LOADING_MS = 600; // simulated “submitting…” delay after hold completes
 
   // ===== ELEMENTS =====
   const wrap = document.getElementById("wrap");
@@ -206,20 +202,21 @@
     wrap.classList.remove("pressed","success");
     cta.textContent = "Hold to lock entry";
     sub.textContent = "Release cancels";
-    show("");
+    show("");          // ✅ removed “Ready.”
     setDeg(0);
     if (raf) cancelAnimationFrame(raf);
     raf = null;
   }
 
   async function onComplete(){
-    // completed hold -> loading -> success
     loading = true;
     show("Submitting…");
     cta.textContent = "Submitting…";
     sub.textContent = "Please wait";
     wrap.classList.remove("pressed");
+
     await new Promise(r => setTimeout(r, LOADING_MS));
+
     loading = false;
     locked = true;
     wrap.classList.add("success");
@@ -227,7 +224,7 @@
     sub.textContent = "Good luck";
     show("Submitted ✅");
     setDeg(360);
-    // optional haptic (works on many phones)
+
     if (navigator.vibrate) navigator.vibrate([40, 20, 40]);
     showPopup();
   }
@@ -250,26 +247,33 @@
     if (locked || loading) return;
     e.preventDefault();
     if (holding) return;
+
     holding = true;
     startAt = Date.now();
     wrap.classList.add("pressed");
+
     show("Holding… don’t release.");
     cta.textContent = "Holding…";
     sub.textContent = `${Math.round(HOLD_MS/1000)}s to lock`;
+
     tick();
   }
 
   function endHold(e){
     if (!holding) return;
     e.preventDefault();
+
     holding = false;
     wrap.classList.remove("pressed");
+
     show("Released too early — try again.");
     cta.textContent = "Hold to lock entry";
     sub.textContent = "Release cancels";
+
     setDeg(0);
     if (raf) cancelAnimationFrame(raf);
     raf = null;
+
     if (navigator.vibrate) navigator.vibrate(20);
   }
 
@@ -278,9 +282,7 @@
   window.addEventListener("pointerup", endHold);
   window.addEventListener("pointercancel", endHold);
 
-
-
-  // Auto demo (for testing)
+  // Auto demo (for testing) — Tap simulates a full hold
   autoBtn.addEventListener("click", async () => {
     if (locked || loading) return;
     startHold(new Event("pointerdown"));
