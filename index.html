@@ -1,376 +1,305 @@
-<!DOCTYPE html>
-<html lang="ja">
-
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <title>GOKOKU 登録フォーム</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hold to Lock</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <style>
-    textarea[readonly] {
-      background-color: #f9f9f9;
-      cursor: not-allowed;
-      font-size: 11px;
+    :root{
+      --bg:#050505;
+      --card:#0f0f0f;
+      --text:#ffffff;
+      --muted:rgba(255,255,255,.72);
+      --muted2:rgba(255,255,255,.42);
+      --ring:rgba(255,255,255,.9);
+      --ring2:rgba(255,255,255,.25);
+      --success:rgba(80, 255, 170, .95);
+    }
+    body { background: var(--bg); color: var(--text); }
+    .hero.is-primary { background: #0b0b0b; }
+    .box {
+      background: var(--card);
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    /* Center UI */
+    .center { display:flex; flex-direction:column; align-items:center; gap:14px; padding: 26px 10px; }
+
+    /* Hold button + ring */
+    .ringWrap{
+      width: 240px; height: 240px;
+      position: relative;
+      border-radius: 999px;
+      display:flex; align-items:center; justify-content:center;
+      user-select:none; -webkit-user-select:none;
+      touch-action:none; /* important on mobile */
     }
 
-    /* Popup and Overlay Styling */
-    #overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
+    /* We draw progress via conic-gradient */
+    .ring{
+      position:absolute; inset:0;
+      border-radius:999px;
+      background:
+        conic-gradient(var(--ring) 0deg, var(--ring) var(--deg), var(--ring2) var(--deg), var(--ring2) 360deg);
+      filter: drop-shadow(0 0 18px rgba(255,255,255,.08));
+      transition: filter .15s ease;
     }
 
-    .popup {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 30px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      border-radius: 12px;
-      text-align: left;
-      width: 90%;
-      max-width: 500px;
-      line-height: 1.6;
-      font-size: 15px;
-      z-index: 1000;
+    .inner{
+      width: 190px; height: 190px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.08);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap: 8px;
+      position:relative;
+      z-index: 2;
+      transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease;
     }
 
-    .popup-button {
-      background-color: #00c300;
-      color: white;
-      min-width: 180px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
+    .cta{
+      font-weight: 900;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      font-size: 14px;
+      opacity: .95;
     }
 
-    .popup-button:hover {
-      background-color: #00a300;
+    .hint{
+      font-size: 12px;
+      color: var(--muted2);
     }
 
-    .loader {
-      border: 2px solid #f3f3f3;
-      border-top: 2px solid white;
-      border-radius: 50%;
-      width: 14px;
-      height: 14px;
-      animation: spin 0.6s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
+    .status{
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      min-height: 20px;
+      text-align:center;
     }
 
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
+    /* Pressed state */
+    .pressed .inner{
+      transform: scale(0.98);
+      box-shadow: 0 0 0 2px rgba(255,255,255,.06), 0 0 24px rgba(255,255,255,.10);
+      border-color: rgba(255,255,255,.18);
+    }
+    .pressed .ring{
+      filter: drop-shadow(0 0 26px rgba(255,255,255,.16));
+    }
 
-      100% {
-        transform: rotate(360deg);
-      }
+    /* Success state */
+    .success .ring{
+      background:
+        conic-gradient(var(--success) 0deg, var(--success) 360deg);
+      filter: drop-shadow(0 0 26px rgba(80,255,170,.22));
+    }
+    .success .inner{
+      border-color: rgba(80,255,170,.25);
+      box-shadow: 0 0 0 2px rgba(80,255,170,.10), 0 0 24px rgba(80,255,170,.18);
+    }
+
+    /* Popup */
+    #overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.62); z-index: 50; }
+    #popup {
+      display:none;
+      position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+      background:#fff; color:#111;
+      padding: 26px;
+      border-radius: 14px;
+      width: min(520px, 92vw);
+      z-index: 60;
+      box-shadow: 0 10px 40px rgba(0,0,0,.45);
     }
   </style>
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ECFQXT0K5"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
-    gtag("config", "G-8ECFQXT0K5");
-  </script>
 </head>
 
 <body>
   <section class="hero is-primary is-bold">
     <div class="hero-body">
       <div class="container">
-        <h1 class="title has-text-centered">GOKOKU 登録フォーム</h1>
+        <h1 class="title has-text-centered">VIP LOTTERY</h1>
+        <p class="subtitle has-text-centered">Hold to lock entry (demo)</p>
       </div>
     </div>
   </section>
 
-  <form id="form" class="container m-4" method="POST">
-    <!-- Fields: Phone, Postal Code -->
+  <section class="section">
+    <div class="container" style="max-width: 620px;">
+      <div class="box">
+        <div class="center">
+          <div class="has-text-grey-light">Your ID</div>
+          <div class="title is-3 mono" style="margin-bottom:0;">USER 0142</div>
 
-    <div class="field">
-      <label class="label">電話番号</label>
-      <div class="control">
-        <input class="input" type="tel" placeholder="例: 080-1111-1111" name="phone" id="phone" maxlength="13"
-          required />
-      </div>
-      <p class="help">形式: 080-1111-1111（ハイフンは自動的に追加されます）</p>
-    </div>
+          <div id="wrap" class="ringWrap" aria-label="Hold to lock entry">
+            <div id="ring" class="ring"></div>
+            <div class="inner">
+              <div id="cta" class="cta">Hold to lock entry</div>
+              <div id="sub" class="hint">Release cancels</div>
+            </div>
+          </div>
 
-    <div class="field">
-      <label class="label">郵便番号</label>
-      <div class="control">
-        <input class="input" type="text" placeholder="例: 123-4567" name="postalCode" id="postalCode" maxlength="8"
-          required />
-      </div>
-      <p class="help">形式: 123-4567（ハイフンは自動的に追加されます）</p>
-    </div>
+          <div id="status" class="status">Ready.</div>
 
-    <div class="field">
-      <label class="label">都道府県と市区町村</label>
-      <div class="control">
-        <input class="input" type="text" id="prefecture" placeholder="都道府県" readonly />
-        <input class="input" type="text" id="city" placeholder="市区町村" readonly />
-      </div>
-    </div>
+          <div class="buttons">
+            <button id="resetBtn" class="button is-dark is-light">Reset</button>
+            <button id="autoBtn" class="button is-primary">Auto-demo</button>
+          </div>
 
-    <div class="field">
-      <label class="label">住所詳細</label>
-      <div class="control">
-        <input class="input" type="text" id="addressDetail" name="address" placeholder="例: 1-2-3 206号室" required />
+          <p class="has-text-grey is-size-7" style="text-align:center;">
+            Works on mobile. Press and hold the circle for the full duration.
+          </p>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="field">
-      <label class="label">利用規約</label>
-      <div class="control">
-        <textarea class="textarea" style="height: 200px; overflow-y: scroll;" readonly>
-第1条 目的
-1.GOKOKUは、自転車の背面に安装されるタブレットを通じて広告を掲載し、
-2.自転車オーナーに広告の收益の一部を配分するサービスを提供します。
-        
-第2条 登録条件
-1. 対象者は、正常に自転車を所有し、日常的に利用している人に限定されます。
-2. 登録者は、LINEの公式アカウントを追加し、フォームを全て正しく記入する必要があります。
-        
-第3条 広告デバイスの利用
-1. GOKOKUが提供するタブレットは、登録者の自転車に安装されます。
-2. 安装されたタブレットは、GOKOKUのサーバーを通じて監視されます。
-3. 登録者は、デバイスを充電し、正常に操作できる状態を保つことに責任を持ちます。
-        
-第4条 一定金額の配分
-1. GOKOKUは、每日倍金で500円を配分しますが、条件としてデバイスが正常に動作し、インプレッション数が1日あたり1000を超える必要があります。
-2. 支払い方法はLINE Payを通じ、登録時に設定されたLINEアカウントへ直接振り込まれます。
-3. 登録者がサービス利用を停止したい場合、デバイスを返却する法的義務を負います。
-        
-第5条 責任の限定
-1. タブレットの故障や機能保存に関する問題については、GOKOKUは対処を行いますが、自転車の利用経路の制総などによる保護については保証しません。
-2. 登録者の不正利用やデータ漏洩については、登録者自身が責任を負うものとします。
-        
-第6条 解約の変更
-1.GOKOKUは、正常に広告サービスを提供するために、この解約を不要に変更することがあります。
-        
-第7条 問い合わせ
-1.問題や質問がある場合は、LINE公式アカウントを通じてお問い合わせください。
-        </textarea>
-      </div>
-    </div>
-
-    <div class="field">
-      <div class="control">
-        <label class="checkbox">
-          <input type="checkbox" name="consent" id="consentCheckbox" value="yes" required />
-          利用規約に同意します。
-        </label>
-      </div>
-    </div>
-
-    <!-- Submit Button -->
-    <div class="field" style="display: flex; flex-direction: row; justify-content: center; gap: 8px;">
-      <div class="control">
-        <button class="button is-primary" type="submit" id="submitButton" style="width: 116px;" disabled>
-          <span id="submitText">送信</span>
-          <span id="loadingSpinner" class="loader is-small" style="display: none; margin-left: 8px;"></span>
-        </button>
-      </div>
-      <div class="control">
-        <button class="button is-danger" type="button" style="width: 116px;">キャンセル</button>
-      </div>
-    </div>
-  </form>
-
-  <!-- Thank You Popup -->
   <div id="overlay"></div>
-  <div id="thank-you-popup" class="popup">
-    <h2>ご登録完了いたしました</h2>
-    <p>
-      デバイスの発送準備を進めます。<br />
-      <b>サポート対応、稼働状況の確認</b>の通知を受け取るために、<br />
-      必ずGOKOKUのLINE公式アカウントを追加してください。
-    </p>
-    <div style="text-align: center; margin-top: 20px;">
-      <a href="https://lin.ee/7H7xmDt" target="_blank">
-        <button class="popup-button">LINEで追加する</button>
-      </a>
-    </div>
-    <!-- Error Popup for Invalid Postal Code-->
-  </div>
-
-  <div id="error-popup" class="popup">
-    <div style="display: flex; flex-direction: column; justify-self: center;">
-      <p style="margin-bottom:16px;">郵便番号が見つかりませんでした。</p>
-      <button class="button is-primary"
-        onclick="document.getElementById('error-popup').style.display='none'">閉じる</button>
+  <div id="popup">
+    <h2 class="title is-4">ENTRY LOCKED ✅</h2>
+    <p style="margin-top:8px;">This is the “submitted” state (no backend).</p>
+    <div style="margin-top:16px; text-align:right;">
+      <button id="closePopup" class="button is-primary">OK</button>
     </div>
   </div>
 
-  <script>
-    let lineUserId = null;
-    let isPostalCodeValid = false;
+<script>
+  // ===== SETTINGS =====
+  const HOLD_MS = 7000;         // change to 5000 if you want faster
+  const LOADING_MS = 600;       // simulated “submitting…” delay after hold completes
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      // 🔐 LIFF Login to get LINE user ID
-      await liff.init({ liffId: "2007640086-Y072V72W" }); // 👈 Replace this with your actual LIFF ID
-      if (!liff.isLoggedIn()) {
-        liff.login();
-        return;
-      }
-      const profile = await liff.getProfile();
-      lineUserId = profile.userId;
-      document.getElementById("phone").focus(); //
+  // ===== ELEMENTS =====
+  const wrap = document.getElementById("wrap");
+  const ring = document.getElementById("ring");
+  const status = document.getElementById("status");
+  const cta = document.getElementById("cta");
+  const sub = document.getElementById("sub");
 
-      // ⬇️ Your original logic starts here
-      const phoneInput = document.getElementById("phone");
-      phoneInput.focus()
-      const postalCodeInput = document.getElementById("postalCode");
-      const submitButton = document.getElementById("submitButton");
-      const consentCheckbox = document.getElementById("consentCheckbox");
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && consentCheckbox.checked) {
-          e.preventDefault();
-          submitButton.click();
-        }
+  const overlay = document.getElementById("overlay");
+  const popup = document.getElementById("popup");
+  const closePopup = document.getElementById("closePopup");
 
-      });
+  const resetBtn = document.getElementById("resetBtn");
+  const autoBtn = document.getElementById("autoBtn");
 
+  // ===== STATE =====
+  let holding = false;
+  let startAt = 0;
+  let raf = null;
+  let locked = false;
+  let loading = false;
 
-      // Phone number formatting
-      phoneInput.addEventListener("input", (e) => {
-        let value = e.target.value.replace(/\D/g, "");
-        if (value.length > 3 && value.length <= 7) value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
-        if (value.length > 7) value = value.replace(/^(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
-        e.target.value = value.substring(0, 13);
-      });
+  function setDeg(deg){
+    ring.style.setProperty("--deg", `${deg}deg`);
+  }
 
-      // Postal code autofill
-      let debounceTimeout;
+  function show(text){ status.textContent = text; }
 
-      document.getElementById("postalCode").addEventListener("input", (e) => {
-        clearTimeout(debounceTimeout);
+  function showPopup(){
+    overlay.style.display = "block";
+    popup.style.display = "block";
+  }
+  function hidePopup(){
+    overlay.style.display = "none";
+    popup.style.display = "none";
+  }
+  closePopup.addEventListener("click", hidePopup);
+  overlay.addEventListener("click", hidePopup);
 
-        let value = e.target.value.replace(/\D/g, "");
-        if (value.length > 3) {
-          value = value.replace(/^(\d{3})(\d+)/, "$1-$2");
-        }
-        e.target.value = value.substring(0, 8);
+  function resetAll(){
+    holding = false;
+    startAt = 0;
+    locked = false;
+    loading = false;
+    wrap.classList.remove("pressed","success");
+    cta.textContent = "Hold to lock entry";
+    sub.textContent = "Release cancels";
+    show("Ready.");
+    setDeg(0);
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
+  }
 
-        const rawPostalCode = value.replace("-", "");
+  async function onComplete(){
+    // completed hold -> loading -> success
+    loading = true;
+    show("Submitting…");
+    cta.textContent = "Submitting…";
+    sub.textContent = "Please wait";
+    wrap.classList.remove("pressed");
+    await new Promise(r => setTimeout(r, LOADING_MS));
+    loading = false;
+    locked = true;
+    wrap.classList.add("success");
+    cta.textContent = "Entry locked";
+    sub.textContent = "Good luck";
+    show("Submitted ✅");
+    setDeg(360);
+    // optional haptic (works on many phones)
+    if (navigator.vibrate) navigator.vibrate([40, 20, 40]);
+    showPopup();
+  }
 
-        debounceTimeout = setTimeout(async () => {
-          console.log("timeout")
-          if (rawPostalCode.length === 7) {
-            try {
-              console.debug("Fetching address for postal code:", rawPostalCode);
+  function tick(){
+    if (!holding) return;
+    const elapsed = Date.now() - startAt;
+    const pct = Math.min(1, elapsed / HOLD_MS);
+    setDeg(pct * 360);
 
-              const response = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${rawPostalCode}`);
-              const text = await response.text();
-              let data;
+    if (elapsed >= HOLD_MS){
+      holding = false;
+      onComplete();
+      return;
+    }
+    raf = requestAnimationFrame(tick);
+  }
 
-              try {
-                data = JSON.parse(text);
-              } catch (parseError) {
-                console.error("Error parsing API response as JSON:", parseError);
-                data = null;
-              }
+  function startHold(e){
+    if (locked || loading) return;
+    e.preventDefault();
+    if (holding) return;
+    holding = true;
+    startAt = Date.now();
+    wrap.classList.add("pressed");
+    show("Holding… don’t release.");
+    cta.textContent = "Holding…";
+    sub.textContent = `${Math.round(HOLD_MS/1000)}s to lock`;
+    tick();
+  }
 
-              console.debug("API Response:", data);
+  function endHold(e){
+    if (!holding) return;
+    e.preventDefault();
+    holding = false;
+    wrap.classList.remove("pressed");
+    show("Released too early — try again.");
+    cta.textContent = "Hold to lock entry";
+    sub.textContent = "Release cancels";
+    setDeg(0);
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
+    if (navigator.vibrate) navigator.vibrate(20);
+  }
 
-              if (data && data.status === 200 && Array.isArray(data.results) && data.results.length > 0) {
-                const result = data.results[0];
-                document.getElementById("prefecture").value = result.address1 || "";
-                document.getElementById("city").value = `${result.address2 || ""} ${result.address3 || ""}`.trim();
-                isPostalCodeValid = true;
-              } else {
-                document.getElementById("error-popup").style.display = "block";
-                document.getElementById("prefecture").value = "";
-                document.getElementById("city").value = "";
-                isPostalCodeValid = false;
-              }
-            } catch (error) {
-              console.error("Error fetching address data:", error);
-              document.getElementById("prefecture").value = "";
-              document.getElementById("city").value = "";
-            }
-          } else {
-            document.getElementById("prefecture").value = "";
-            document.getElementById("city").value = "";
-          }
-        }, 500);
-      });
+  // Pointer events work on iOS/Android modern browsers
+  wrap.addEventListener("pointerdown", startHold);
+  window.addEventListener("pointerup", endHold);
+  window.addEventListener("pointercancel", endHold);
 
-      consentCheckbox.addEventListener("change", () => {
-        submitButton.disabled = !consentCheckbox.checked;
-        console.log(submitButton.disabled)
-      });
+  resetBtn.addEventListener("click", resetAll);
 
-      document.getElementById("form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        if (!isPostalCodeValid) {
-          document.getElementById("error-popup").style.display = "block";
-          return;
-        }
-        const phone = document.getElementById("phone").value.trim();
-        const phoneRegex = /^0\d{2}-\d{4}-\d{4}$/;
+  // Auto demo (for testing)
+  autoBtn.addEventListener("click", async () => {
+    if (locked || loading) return;
+    startHold(new Event("pointerdown"));
+    await new Promise(r => setTimeout(r, HOLD_MS + 50));
+  });
 
-        if (!phoneRegex.test(phone)) {
-          alert("正しい電話番号を入力してください（例: 080-1234-5678）");
-          return;
-        }
-        const prefecture = document.getElementById("prefecture").value.trim();
-        const city = document.getElementById("city").value.trim();
-
-        if (!prefecture || !city) {
-          document.getElementById("error-popup").style.display = "block";
-          return;
-        }
-
-        document.getElementById("submitText").innerText = "送信中...";
-        document.getElementById("loadingSpinner").style.display = "inline-block";
-        submitButton.disabled = true;
-
-        const formData = new FormData(e.target);
-        const payload = new URLSearchParams();
-        formData.forEach((value, key) => payload.append(key, value));
-        if (lineUserId) payload.append("lineUserId", lineUserId);
-
-        try {
-          const response = await fetch("https://script.google.com/macros/s/AKfycby5uAKbAmYjaUvK7jrgHJ1nuxL3nJP6HDjXmJbSzF8Q3sKZdGa5nmrL2d0Ch1KUL5S4/exec", {
-            method: "POST",
-            body: payload,
-          });
-          const data = await response.json();
-          console.log("Form submission success:", data);
-          document.getElementById("error-popup").style.display = "none";
-          document.getElementById("thank-you-popup").style.display = "block";
-          document.getElementById("overlay").style.display = "block";
-        } catch (error) {
-          console.error("Form submission error:",
-            error);
-          alert("送信中にエラーが発生しました。もう一度お試しください。");
-        } finally {
-          document.getElementById("submitText").innerText = "送信済み";
-          document.getElementById("loadingSpinner").style.display = "none";
-          submitButton.disabled = false;
-        }
-      });
-    });
-  </script>
+  resetAll();
+</script>
 </body>
-
 </html>
